@@ -1,0 +1,7 @@
+{
+	"host":"ldap://localhost",
+	"port":"389",
+	"user":"CN=admin,DC=example,DC=com",
+	"password":"MY_PASSWORD",
+	"base_dn":"OU=people,DC=example,DC=com"
+}
