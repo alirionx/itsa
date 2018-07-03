@@ -1,0 +1,50 @@
+{
+	"profile":{
+		"txt":"User Profile",
+		"type":"hash",
+		"linkval":"view=profile",
+		"access_roles":["user", "srvadmin", "diradmin"]
+	},
+	"home":{
+		"txt":"Home",
+		"type":"hash",
+		"linkval":"view=home",
+		"access_roles":["user", "srvadmin", "diradmin"]
+	},
+	"services":{
+		"txt":"Services",
+		"type":"hash",
+		"linkval":"view=services",
+		"access_roles":["user", "srvadmin", "diradmin"]
+	},
+	"requests":{
+		"txt":"Requests",
+		"type":"hash",
+		"linkval":"view=requests",
+		"access_roles":["user", "srvadmin", "diradmin"]
+	},
+	"srvmgmt":{
+		"txt":"Service MGMT",
+		"type":"hash",
+		"linkval":"view=srvmgmt",
+		"access_roles":["srvadmin"]
+	},
+	"usrmgmt":{
+		"txt":"User MGMT",
+		"type":"hash",
+		"linkval":"view=usrmgmt",
+		"access_roles":["diradmin"]
+	},
+	"grpmgmt":{
+		"txt":"Group MGMT",
+		"type":"hash",
+		"linkval":"view=grpmgmt",
+		"access_roles":["diradmin"]
+	},
+	"logoff":{
+		"txt":"Logoff",
+		"type":"function_fw",
+		"linkval":"logoff",
+		"access_roles":["user", "srvadmin", "diradmin"]
+	}
+}

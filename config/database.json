@@ -1,0 +1,6 @@
+{
+	"host":"localhost",
+	"user":"MY_USER",
+	"password":"MY_PASSWORD",
+	"schema":"MY_SCHEMA"
+}
