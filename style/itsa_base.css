@@ -135,4 +135,231 @@ body{
 }
 
 
+.view_blade{
+	min-width:400px;
+	max-width:1000px;
+	width:88%;
+	margin: 10px auto 20px auto;
+	min-height:100px;
+	padding:18px 20px 20px 20px;
+	color:#000;
+	font-size:12px;
+	background-color:rgba(255, 255, 255, .65);
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 2px #AAA;
+	text-align:center;
+}
+.view_blade div[hl]{
+	font-size: 14px;
+	font-weight:bold;
+	color: #622c2c;
+	padding-bottom:18px;
+	text-align:center;
+	*text-decoration:underline;
+}
+.view_blade input[bar_txtbox_hl]{
+	width:100%;
+	padding-bottom:6px;
+	font-size: 12px;
+	font-weight:bold;
+	color: #000;
+	text-decoration:underline;
+	text-align:left;
+	border:none;
+}
+.view_blade input[bar_txtbox_hl]:focus{
+	background-color:#edf2fd;
+}
 
+.view_blade textarea[bar_txtbox_txt]{
+	width:100%;
+	height: 4em;
+	font-size: 12px;
+	color: #000;
+	text-align:left;
+	font-family: Verdana, sans-serif;
+	border:none;
+	resize: none;
+}
+.view_blade textarea[bar_txtbox_txt]:focus{
+	background-color:#edf2fd;
+}
+
+.view_blade button[btn]{
+	min-width:80px;
+	border: none;
+	padding:6px;
+	background-color:#622c2c;
+	color:white;
+	text-align:center;
+	border-radius:4px;
+	margin: 10px 10px auto 10px;
+	font-size: 12px;
+	cursor:pointer;
+}
+.view_blade button[btn]:hover{
+	background-color:#742929;
+}
+
+.view_blade div[bar]{
+	*width:100%;
+	margin: 10px auto 10px auto;
+	min-height:20px;
+	padding:14px 0 14px 0;
+	color:#000;
+	font-size:12px;
+	background-color:rgba(255, 255, 255 );
+	border: 1px solid #BBB;
+	*box-shadow: 0px 1px 2px #999;
+	text-align:left;
+}
+.view_blade div[bar]:hover{
+	*background-color:#e6f2ff;
+	border: 1px solid #999;
+}
+.view_blade div[option_frame]{
+	*float:left;
+	display:inline-block;
+	width:15%;
+	height:70px;
+	padding:0px;
+	margin:0px;
+	text-align:center;
+	*background-color:#DDD;
+}
+.view_blade img[icon]{
+	*float:left;
+	width:70px;
+	height:70px;
+	*border: 1px solid #888;
+	margin:0px;
+}
+.view_blade div[bar_txtbox]{
+	display:inline-block;
+	width:70%;
+	height:70px;
+	padding:0px;
+	margin:0px;
+	*background-color:#DDD;
+}
+.view_blade div[bar_memberbox]{
+	display:inline-block;
+	width:65%;
+	min-height:10px;
+	padding:0.5%;
+	margin:10px 15% 0 15%;
+	*background-color:#F8F8F8;
+	font-size:11px;
+}
+.view_blade div[bar_memberbox] button{
+	min-width:80px;
+	border: none;
+	padding:4px 8px 4px 8px;
+	background-color:#622c2c;
+	color:white;
+	text-align:center;
+	border-radius:4px;
+	margin-top: 10px;
+	font-size: 11px;
+	cursor:pointer;
+}
+.view_blade div[bar_memberbox] button:hover{
+	background-color:#742929;
+}
+
+
+.opt_menue{
+	border: none;
+	padding:6px 0px 6px 6px;
+	background-color:#622c2c;
+	color:white;
+	text-align:center;
+	border-radius:4px;
+	*margin: 10px auto auto auto;
+	font-size: 12px;
+}
+
+.action_form{
+	position:fixed;
+	*left:0px;
+	*top:0px;
+	width:40%;
+	min-width:300px;
+	max-width:500px;
+	padding:1.5%;
+	color:#000;
+	font-size:12px;
+	background-color:#FAFAFA;
+	border: 1px solid #AAA;
+	border-radius:8px;
+	box-shadow: 0px 4px 8px #666;
+	text-align:center;
+}
+.action_form div[af_hl]{
+	font-size: 13px;
+	font-weight:bold;
+	color: #622c2c;
+	padding-bottom:18px;
+	text-align:center;
+	*text-decoration:underline;
+}
+.action_form input[type=text]{
+	width:80%;
+	padding:8px;
+	margin-bottom:10px;
+	font-size: 12px;
+	font-weight:bold;
+	color: #000;
+	text-align:center;
+	*border-radius:6px;
+	border:1px solide #666;
+}
+.action_form input[type=text]:focus{
+	background-color:#edf2fd;
+}
+.action_form input[type=file]{
+	width:80%;
+	padding:8px;
+	margin-bottom:10px;
+	font-size: 12px;
+	font-weight:bold;
+	color: #000;
+	text-align:center;
+	background-color:#edf2fd;
+	*border-radius:6px;
+	*border:1px solide #666;
+}
+.action_form button{
+	min-width:80px;
+	border: none;
+	padding:6px;
+	background-color:#622c2c;
+	color:white;
+	text-align:center;
+	border-radius:4px;
+	margin: 10px 10px auto 10px;
+	font-size: 12px;
+	cursor:pointer;
+}
+.action_form button:hover{
+	background-color:#742929;
+}
+
+.action_form div[usr_frame]{
+	text-align:left;
+	background-color:#FFF;
+	padding:4px;
+	margin:6px 20px 6px 20px;
+	border:1px solid #CCC;
+}
+
+
+.blocker{
+	position:fixed;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:1200px;
+	background-color:#FFF;
+	opacity:0.7;
+}

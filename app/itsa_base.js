@@ -6,7 +6,12 @@
 	
 	var base_view 	= "home";
 	
+	var view_fw		= [];
 	var view_build 	= [];
+	
+	//var func_fw 	= [];
+	
+	var opt_menue_fw = [];
 
 //----------------------------------------------------------
 
@@ -64,6 +69,16 @@
 	}
 	
 //----------------------------------------------------------
+	
+	var function_fw = [];
+	
+	function_fw["logoff"] = function() {
+		
+				
+		alert( "here comes the logoff ;)" );
+	}
+	
+//----------------------------------------------------------
 
 	function view_call(){
 		
@@ -105,6 +120,141 @@
 	}
 
 //----------------------------------------------------------
+	
+	function form_post( url , data , follow_function , target ){
+		
+		var xhr = new XMLHttpRequest();
+			xhr.withCredentials = true;
 
+			xhr.addEventListener("readystatechange", function () {
+				if ( this.readyState === 4 ) {
+					
+					console.log(this.responseText);
+					
+					var header_code = this.status;
+					
+					if( header_code.toString()[0] == 2 ){
+						
+						var obj = null;
+						
+						if( IsJsonString( this.responseText ) == true ){ 
+							
+							var obj = JSON.parse( this.responseText );	
+						}
+						
+						if( follow_function != undefined ){
+							follow_function( obj , target );
+						}
+					}
+					else{
+						alert("Something went wrong in function " + data.get("function") + " with error code " + this.status );
+					} 
+				}
+				
+			});
+			xhr.open("POST", url );
+			xhr.setRequestHeader("Cache-Control", "no-cache");
+
+			xhr.send(data);
+	}
 
 //----------------------------------------------------------
+
+
+	opt_menue_fw["ldap_delete"] = function( dn ){
+		
+		var chk = confirm("Do you really want to delete this entry?");
+		if (chk == true) {
+   
+			var data = new FormData();
+				data.append("function", "ldap_entry_delete");
+				data.append("dn", dn);
+							
+			form_post( app_api , data , view_call );
+		}
+	}
+	
+//----------------------------------------------------------
+	
+	
+	opt_menue_fw["ldap_icon"] = function( dn ){
+		
+		blocker_call();
+		
+		//----------------------
+			
+			var af = simple_element_build( "DIV" , "action_form" );
+		
+		//----------------------
+		
+			var	af_hl = document.createElement("DIV");
+				af_hl.setAttribute("af_hl" , "1" );
+				af_hl.innerHTML = "Change Ldap Object Icon";
+				
+			af.appendChild(af_hl);
+			
+		//----------------------
+			
+			var	af_input = document.createElement("INPUT");
+				af_input.type = "file";
+				af_input.id   = "ldap_icon_input";
+				
+			af.appendChild(af_input);
+			
+		//----------------------
+			
+			var	af_btn = document.createElement("BUTTON");
+				af_btn.innerHTML = "Ok";
+				
+				af_btn.setAttribute( "dn" , dn );
+				af_btn.onclick = function(){
+					
+					var dn 		  = this.getAttribute("dn");
+					var ico_domel = document.getElementById("ldap_icon_input");
+					var ico_file  = ico_domel.files[0];
+					
+					if( ico_file == undefined ){
+					
+						alert("please select an image file.");
+						return null;
+					}
+					if( ico_file.type != "image/png" && ico_file.type != "image/jpeg" ){
+					
+						alert("please select an valid image file (jpeg or png).");
+						ico_domel.value = "";
+						return null;
+					}
+					console.log(ico_file); 
+					
+					var data = new FormData();
+						data.append("function", "ldap_icon_change");
+						data.append("dn", dn);
+						data.append("ico_file", ico_file);
+						
+					form_post( app_api , data, view_call );
+						
+					blocker_remove();
+					this.parentNode.parentNode.removeChild(this.parentNode);
+				}
+				
+			af.appendChild(af_btn);
+			
+			
+			var	af_btn = document.createElement("BUTTON");
+				af_btn.innerHTML = "Cancel";
+				af_btn.onclick = function(){
+					
+					blocker_remove();
+					this.parentNode.parentNode.removeChild(this.parentNode);
+				}
+				
+			af.appendChild(af_btn);
+		
+		//----------------------
+		
+		document.body.appendChild(af);
+		center_domel( af , "200px" );
+	}
+
+//----------------------------------------------------------
+
