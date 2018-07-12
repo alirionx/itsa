@@ -120,33 +120,61 @@
 //--------Call LDAP Users and Attributes---------------------------------------
 	
 	function ldap_users_call( $POST ){
+		
+		$obj_in['def'] = array();
+	
+	//----------------------------
+	
+		$obj_in['def']['uid']['hl'] 	 		= 'User ID';
+		$obj_in['def']['uid']['align'] 			= 'left';
+		$obj_in['def']['uid']['width'] 			= '';
+		$obj_in['def']['uid']['plh'] 			= '';
+		
+		$obj_in['def']['givenname']['hl'] 	 	= 'Givenname';
+		$obj_in['def']['givenname']['align'] 	= 'left';
+		$obj_in['def']['givenname']['width'] 	= '';
+		$obj_in['def']['givenname']['plh'] 		= '';
+		
+		$obj_in['def']['sn']['hl'] 	 			= 'Surname';
+		$obj_in['def']['sn']['align'] 			= 'left';
+		$obj_in['def']['sn']['width'] 			= '';
+		$obj_in['def']['sn']['plh'] 			= '';
+		
+		$obj_in['def']['mail']['hl'] 	 		= 'Email';
+		$obj_in['def']['mail']['align'] 		= 'left';
+		$obj_in['def']['mail']['width'] 		= '';
+		$obj_in['def']['mail']['plh'] 			= '';
+	
+	//----------------------------
 	
 		$ldap_base_dn = "OU=People," . $GLOBALS['ldap_base_dn'];
 			
 		$ldap_con = ldap_con_do();
 			
 		$search_filter = '(&(objectClass=inetOrgPerson)(uid=*))';
-		$justthese = array( "uid" , "cn", "description", "givenName", "sn" , "dn" );
+		$justthese = array( "uid" , "cn", "description", "givenName", "sn" , "mail" , "dn", "memberof" );
 			
 		$result  = ldap_search($ldap_con, $ldap_base_dn, $search_filter , $justthese);				
 		$entries = ldap_get_entries($ldap_con, $result);
 		
+		$obj_in['content']  = $entries;
+		
 		//---------------------
 		
-			recursive_unset($entries, 'count');
+			recursive_unset($obj_in['content'], 'count');
 			
 			$i = 0;
 			
-			foreach( $entries as $is_entry ){
+			foreach( $obj_in['content'] as $is_entry ){
 				
 				if( file_exists("../icos/".$is_entry["cn"][0].".png") ){	
-					$entries[$i]['objecticon'] = $is_entry["cn"][0].".png";
+					$obj_in['content'][$i]['objecticon'] = $is_entry["cn"][0].".png";
 				}
 				else if( file_exists("../icos/".$is_entry["cn"][0].".jpg") ){	
-					$entries[$i]['objecticon'] = $is_entry["cn"][0].".jpg";
+					$obj_in['content'][$i]['objecticon'] = $is_entry["cn"][0].".jpg";
 				}
 				else{
-					$entries[$i]['objecticon'] = "usr_plh.png";
+					$obj_in['content'][$i]['objecticon'] = "usr_plh.png";
 				}
 				
 				$i ++;
@@ -159,10 +187,10 @@
 			}
 
 			if( isset( $POST['output'] ) && $POST['output'] == 'return_obj' ){
-				return $entries;
+				return $obj_in;
 			}
 			else{
-				$json_out = json_encode( $entries, JSON_PRETTY_PRINT);
+				$json_out = json_encode( $obj_in, JSON_PRETTY_PRINT);
 				print_r( $json_out );
 			}
 		
@@ -184,7 +212,7 @@
 		$ldap_con = ldap_con_do();
 			
 		$search_filter = '(&(objectClass=groupOfNames)(cn=*))';
-		$justthese = array( "cn", "businessCategory", "descShort", "descLong", "serviceCosts" , "member");
+		$justthese = array( "cn", "businessCategory", "description", "descShort", "descLong", "serviceCosts" , "member" , "servicestatus");
 			
 		$result  = ldap_search($ldap_con, $ldap_base_dn, $search_filter , $justthese);				
 		$entries = ldap_get_entries($ldap_con, $result);
@@ -194,8 +222,14 @@
 			recursive_unset($entries, 'count');
 			
 			$i = 0;
+			$admin_dn = 'cn=admin,'.$GLOBALS['ldap_base_dn'];
+			//$admin_dn = 'cn=admin,dc=app-scape,dc=lab';
 			
 			foreach( $entries as $is_entry ){
+				
+				if (($key = array_search( $admin_dn , $entries[$i]['member'])) !== false) {
+					unset($entries[$i]['member'][$key]);
+				}
 				
 				if( file_exists("../icos/".$is_entry["cn"][0].".png") ){	
 					$entries[$i]['objecticon'] = $is_entry["cn"][0].".png";
@@ -495,11 +529,13 @@
 			$grp_dn = "ou=groups," . $ldap_base_dn;
 			
 			$attr_ary = array();
-			$attr_ary["objectclass"] = "itsa";
-			$attr_ary['cn'] 		 = $grp_cn;
-			$attr_ary['descShort']   = $descShort;  
-			$attr_ary['descLong']    = " ";  
-			$attr_ary['member']   	 = "cn=admin,dc=app-scape,dc=lab";  
+			$attr_ary["objectclass"]   = "itsa";
+			$attr_ary['cn'] 		   = $grp_cn;
+			$attr_ary['descShort']     = $descShort;  
+			$attr_ary['descLong']      = " ";  
+			$attr_ary['member']   	   = "cn=admin,dc=app-scape,dc=lab";  
+			$attr_ary['description']   = "http://";  
+			$attr_ary['servicestatus'] = "inactive";  
 			
 			$new_dn = "cn=" . $attr_ary['cn'] . "," . $grp_dn;
 			
@@ -539,7 +575,7 @@
 			
 			$attr_ary = array( "uid" , "description" , "givenname" , "sn" , "mail" );
 			
-			foreach( $obj_in as $is_user ){
+			foreach( $obj_in['content'] as $is_user ){
 				
 				foreach( $attr_ary as $is_attr ){
 					
@@ -588,9 +624,117 @@
 //-----------------------------------------------------------------------------
 
 
+//--------LDAP User Attributes Call--------------------------------------------
+
+	function usr_edit_call($POST){
+		
+		//print_r($POST);
+		
+		//---------------------
+			
+			$ldap_base_dn = $GLOBALS['ldap_base_dn'];
+			$usr_dn = $POST['usr_dn'];
+			
+			$obj_in = array();
+			$obj_in['dn'] = $usr_dn;
+			$obj_in['function'] = $POST['function'];
+		
+		//---------------------
+			
+			$obj_in['def']['givenname']['hl'] 		= 'Given name';
+			$obj_in['def']['givenname']['width'] 	= '50%';
+			
+			$obj_in['def']['sn']['hl'] 				= 'Surname';
+			$obj_in['def']['sn']['width'] 			= '50%';
+			
+			$obj_in['def']['mail']['hl'] 			= 'User Email';
+			$obj_in['def']['mail']['width'] 		= '50%';
+			
+		//---------------------
+		
+			$ldap_con = ldap_con_do();
+			
+			$search_filter = '(&(objectClass=inetOrgPerson)(cn=*))';
+			$justthese = array( "uid", "givenname", "sn", "mail" );
+				
+			$result  = ldap_search($ldap_con, $usr_dn, $search_filter , $justthese);				
+			$entries = ldap_get_entries($ldap_con, $result);
+			
+			recursive_unset($entries, 'count');
+			
+			//print_r($entries);
+			
+			$obj_in['content'] = $entries[0];
+		//---------------------
+			
+			if( file_exists("../icos/".$obj_in['content']["uid"][0].".png") ){	
+				$obj_in['icon'] = $obj_in['content']["uid"][0].".png";
+			}
+			else if( file_exists("../icos/".$obj_in['content']["uid"][0].".jpg") ){	
+				$obj_in['icon'] = $obj_in['content']["uid"][0].".jpg";
+			}
+			else{
+				$obj_in['icon'] = "usr_plh.png";
+			}
+			
+		//---------------------
+			
+			$json_out = json_encode( $obj_in, JSON_PRETTY_PRINT);
+			print_r( $json_out );
+			
+		//---------------------
+	}
+
+//-----------------------------------------------------------------------------
 
 
+	
 
+//--------LDAP User Add-------------------------------------------------------
+	
+	function ldap_usr_add( $POST ){
+		
+		print_r( $POST);
+		
+		//---------------------
+		
+			$ldap_base_dn 	= $GLOBALS['ldap_base_dn'];
+			
+			$uid = $POST['uid'];
+			
+			$usr_attr_obj  = json_decode( $POST['usr_data'] , true);
+			
+		//---------------------
+		
+			$usr_dn = "ou=people," . $ldap_base_dn;
+			$new_dn = "uid=" . $uid . "," . $usr_dn;
+			
+			$attr_ary = array();
+			$attr_ary["objectclass"][0]   = "inetOrgPerson";
+			$attr_ary["objectclass"][1]   = "person";
+			$attr_ary["objectclass"][1]   = "top";
+			$attr_ary["cn"]   = $uid;
+			
+			foreach( $usr_attr_obj as $key => $value ){
+			
+				$attr_ary[$key]   = $value;	
+			}
+			
+			print_r($attr_ary);
+			
+		//---------------------
+		
+			$ldap_con = ldap_con_do();
+			
+			ldap_add($ldap_con, $new_dn, $attr_ary); 
+			
+			ldap_close($ldap_con);
+			
+		//---------------------
+	}
 
+//-----------------------------------------------------------------------------
+	
+	
 
 ?>

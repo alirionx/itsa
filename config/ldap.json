@@ -1,7 +1,7 @@
 {
 	"host":"ldap://192.168.10.156",
 	"port":"389",
-	"user":"CN=admin,DC=app-scape,DC=lab",
+	"user":"cn=admin,dc=app-scape,dc=lab",
 	"password":"Oviss1234!",
-	"base_dn":"DC=app-scape,DC=lab"
+	"base_dn":"dc=app-scape,dc=lab"
 }

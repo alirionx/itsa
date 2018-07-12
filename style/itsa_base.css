@@ -201,6 +201,24 @@ body{
 	background-color:#742929;
 }
 
+
+.view_blade table[simpletable]{
+	margin:10px auto 4px auto;
+	min-width:600px;
+	width:90%;
+}
+.view_blade table[simpletable] th{
+	padding:6px;
+	background-color:#283346;
+	color:#FFF;
+}
+.view_blade table[simpletable] td{
+	padding:8px 6px 8px 6px;
+	background-color:#FFF;
+	color:#000;
+	border:1px #CCC solid;
+}
+
 .view_blade div[bar]{
 	*width:100%;
 	margin: 10px auto 10px auto;
@@ -233,6 +251,7 @@ body{
 	height:70px;
 	*border: 1px solid #888;
 	margin:0px;
+	cursor:pointer;
 }
 .view_blade div[bar_txtbox]{
 	display:inline-block;
@@ -242,16 +261,16 @@ body{
 	margin:0px;
 	*background-color:#DDD;
 }
-.view_blade div[bar_memberbox]{
+.view_blade div[bar_detailbox]{
 	display:inline-block;
 	width:65%;
 	min-height:10px;
-	padding:0.5%;
-	margin:10px 15% 0 15%;
+	padding:2px;
+	margin:0 15% 0 15%;
 	*background-color:#F8F8F8;
 	font-size:11px;
 }
-.view_blade div[bar_memberbox] button{
+.view_blade div[bar_detailbox] button{
 	min-width:80px;
 	border: none;
 	padding:4px 8px 4px 8px;
@@ -263,7 +282,7 @@ body{
 	font-size: 11px;
 	cursor:pointer;
 }
-.view_blade div[bar_memberbox] button:hover{
+.view_blade div[bar_detailbox] button:hover{
 	background-color:#742929;
 }
 
@@ -328,6 +347,47 @@ body{
 	background-color:#edf2fd;
 	*border-radius:6px;
 	*border:1px solide #666;
+}
+.action_form input[profile]{
+	padding:3px;
+	margin-bottom:8px;
+	font-size: 12px;
+	color: #000;
+	text-align:left;
+	*border-radius:6px;
+	border:1px solide #999;
+}
+.action_form input[profile]:focus{
+	background-color:#edf2fd;
+}
+.action_form div[profile_hl]{
+	display:inline-block;
+	padding:0 0 2px 0;
+	font-size: 11px;
+	font-weight:bold;
+	color: #000;
+	text-align:left;
+	*background-color:#edf2fd;
+	*border-radius:6px;
+}
+.action_form img[avatar]{
+	height:160px;
+	max-width:160px;
+	float:left;
+	margin: 0 10px 0 20px;
+	cursor:pointer;
+}
+
+.action_form select{
+	width:50%;
+	padding:8px;
+	margin:0 25% 8px 25%;
+	font-size: 12px;
+	font-weight:bold;
+	color: #000;
+	text-align:center;
+	*border-radius:6px;
+	border:1px solide #666;
 }
 .action_form button{
 	min-width:80px;

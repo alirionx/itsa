@@ -68,7 +68,7 @@
 					var func_id = this.getAttribute( "func_id" );
 					var action = this.value;
 					
-					opt_menue_fw[action](func_id );
+					opt_menue_fw[action]( func_id );
 					
 					this.value = "null";
 				}

@@ -6,6 +6,8 @@
 	
 	var base_view 	= "home";
 	
+	var base_dn		= "dc=app-scape,dc=lab";
+	
 	var view_fw		= [];
 	var view_build 	= [];
 	
