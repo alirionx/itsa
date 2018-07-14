@@ -80,6 +80,13 @@
 		alert( "here comes the logoff ;)" );
 	}
 	
+	function_fw["profile"] = function() {
+		
+		usr_edit_call();
+	}
+	
+	
+	
 //----------------------------------------------------------
 
 	function view_call(){

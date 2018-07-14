@@ -12,7 +12,7 @@
 		"access_roles":["user", "srvadmin", "diradmin"]
 	},
 	"services":{
-		"txt":"Services",
+		"txt":"My Services",
 		"type":"hash",
 		"linkval":"view=services",
 		"access_roles":["user", "srvadmin", "diradmin"]
@@ -22,12 +22,6 @@
 		"type":"hash",
 		"linkval":"view=requests",
 		"access_roles":["user", "srvadmin", "diradmin"]
-	},
-	"srvmgmt":{
-		"txt":"Service MGMT",
-		"type":"hash",
-		"linkval":"view=srvmgmt",
-		"access_roles":["srvadmin"]
 	},
 	"usrmgmt":{
 		"txt":"User MGMT",

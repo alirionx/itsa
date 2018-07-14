@@ -1,5 +1,22 @@
 <?php
 
+//-----------Work with Sessions---------------------------
+	if (session_status() == PHP_SESSION_NONE) {
+		
+		ini_set('session.gc_maxlifetime', 180);
+		session_start();
+	}
+//--------------------------------------------------------
+
+
+//---Maintenance Mode-------------------------------------
+	
+	$_SESSION['uid'] = 'dquilitzsch';
+	$_SESSION['adm'] = true;
+
+//--------------------------------------------------------
+
+
 //---Usefull Functions-------------------------------------------
 	
 	function recursive_unset(&$array, $unwanted_key) {
@@ -58,14 +75,14 @@
 	
 //-------------------------
 	
-	function ldap_con_do(){
+	function ldap_con_do( ){
 		
 		$ldap_host 		= $GLOBALS['ldap_host'];
 		$ldap_port 		= $GLOBALS['ldap_port'];
 		$ldap_user 		= $GLOBALS['ldap_user'];
 		$ldap_password 	= $GLOBALS['ldap_password'];
 		$ldap_base_dn 	= $GLOBALS['ldap_base_dn'];
-				
+		
 		$ldap_con = ldap_connect( $ldap_host , $ldap_port );
 
 		ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3) or die("Error in Script Line ". __LINE__ .": ".ldap_error($ldap_con) ) ;
@@ -78,6 +95,31 @@
 			return FALSE;
 		}
 	}
+	
+//-------------------------		
+	
+	function ldap_con_chk( $usr , $pwd ){
+		
+		$ldap_host 		= $GLOBALS['ldap_host'];
+		$ldap_port 		= $GLOBALS['ldap_port'];
+		$ldap_base_dn 	= $GLOBALS['ldap_base_dn'];
+		
+		$ldap_user 		= 'uid=' . $usr . ',ou=people,' . $ldap_base_dn ;
+		$ldap_password 	= $pwd;
+		
+		$ldap_con = ldap_connect( $ldap_host , $ldap_port );
+
+		ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3) or die("Error in Script Line ". __LINE__ .": ".ldap_error($ldap_con) ) ;
+		ldap_set_option($ldap_con, LDAP_OPT_REFERRALS, 0); 
+
+		if (TRUE === ldap_bind($ldap_con, $ldap_user, $ldap_password)){
+			return $ldap_con;
+		}
+		else{
+			return FALSE;
+		}
+	}
+
 	
 //--LDAP Connection Test---------------------------
 
@@ -181,15 +223,14 @@
 			}
 		
 		//---------------------
-			
-			if( isset( $POST['output'] ) && $POST['output'] == 'print' ){
-				echo '<pre>';
-			}
 
 			if( isset( $POST['output'] ) && $POST['output'] == 'return_obj' ){
 				return $obj_in;
 			}
 			else{
+				if( isset( $POST['output'] ) && $POST['output'] == 'print' ){
+					echo '<pre>';
+				}
 				$json_out = json_encode( $obj_in, JSON_PRETTY_PRINT);
 				print_r( $json_out );
 			}
@@ -246,15 +287,15 @@
 		
 		//---------------------
 			
-			if( isset( $POST['output'] ) && $POST['output'] == 'print' ){
-				echo '<pre>';
-			}
-			
-			$json_out = json_encode( $entries, JSON_PRETTY_PRINT);
-			print_r( $json_out );
-			
 			if( isset( $POST['output'] ) && $POST['output'] == 'return_obj' ){
 				return $entries;
+			}
+			else{
+				if( isset( $POST['output'] ) && $POST['output'] == 'print' ){
+					echo '<pre>';
+				}
+				$json_out = json_encode( $entries, JSON_PRETTY_PRINT);
+				print_r( $json_out );
 			}
 		
 		//---------------------
@@ -341,7 +382,14 @@
 	
 	function ldap_entry_change( $POST ){
 		
-		print_r( $POST);
+		//---------------------
+			
+			if( isset($POST['mode']) && $POST['mode'] == 'quiet' ){
+				
+			}
+			else{
+				print_r( $POST);
+			}
 		
 		//---------------------
 			
@@ -626,15 +674,21 @@
 
 //--------LDAP User Attributes Call--------------------------------------------
 
-	function usr_edit_call($POST){
+	function ldap_usr_edit_call($POST){
 		
 		//print_r($POST);
-		
+			
+			if( isset( $POST['usr_dn'] ) && $POST['usr_dn']!= "undefined" ){
+				$usr_dn = $POST['usr_dn'];
+			}
+			else{
+				$usr_dn = 'uid=' . $_SESSION['uid'] . ',ou=people,' . $GLOBALS['ldap_base_dn'];
+			}
+			
 		//---------------------
 			
 			$ldap_base_dn = $GLOBALS['ldap_base_dn'];
-			$usr_dn = $POST['usr_dn'];
-			
+
 			$obj_in = array();
 			$obj_in['dn'] = $usr_dn;
 			$obj_in['function'] = $POST['function'];
@@ -712,7 +766,7 @@
 			$attr_ary = array();
 			$attr_ary["objectclass"][0]   = "inetOrgPerson";
 			$attr_ary["objectclass"][1]   = "person";
-			$attr_ary["objectclass"][1]   = "top";
+			$attr_ary["objectclass"][2]   = "top";
 			$attr_ary["cn"]   = $uid;
 			
 			foreach( $usr_attr_obj as $key => $value ){
@@ -734,6 +788,137 @@
 	}
 
 //-----------------------------------------------------------------------------
+
+
+//--------LDAP Call Users Memberships------------------------------------------
+
+	function ldap_usr_memberships_call($POST){
+		
+		//---------------------
+			
+			$ldap_base_dn = $GLOBALS['ldap_base_dn'];
+			$usr_dn = $POST['usr_dn'];
+			
+			$obj_out = array();
+			$obj_out['dn'] = $usr_dn;
+			$obj_out['function'] = $POST['function'];
+			
+		//---------------------
+			
+			$grp_list = array();
+			$membership_list = array();
+			
+			$REST['output'] = 'return_obj';
+			$obj_in = ldap_srvgroups_call( $REST );
+			
+			//print_r(obj_in);
+			
+			$attr_ary = array( "cn" , "descshort" , "servicestatus" );
+			
+			foreach( $obj_in as $is_grp ){
+				
+				foreach( $attr_ary as $is_attr ){
+					
+					if( isset( $is_grp[$is_attr][0] ) ){
+						
+						$grp_list[ $is_grp['cn'][0] ] [$is_attr] = $is_grp[$is_attr][0];
+					}
+				}
+			
+				$grp_list[ $is_grp['cn'][0] ] ["dn"] = $is_grp["dn"];
+				
+				if( in_array( $usr_dn , $is_grp['member'] ) ){
+					
+					array_push( $membership_list , $is_grp["dn"] );
+				}
+			}
+				
+			$obj_out['grp_list'] = $grp_list;
+			$obj_out['membership_list'] = $membership_list;
+			
+		//---------------------
+			
+			$json_out = json_encode( $obj_out, JSON_PRETTY_PRINT);
+			print_r( $json_out );
+			
+		//---------------------
+
+	}
+	
+//-----------------------------------------------------------------------------
+
+
+
+//--------LDAP User Password Change--------------------------------------------
+
+	function ldap_usrpwd_reset( $POST ){
+		
+		//---------------------
+			
+			$mode 	= $POST['mode'];
+			$obj_in = array();
+			
+		//---------------------
+		
+			if( $mode == 'user' ){
+				
+				$pwd_cur = $POST['pwd_cur'];
+				
+				$ldap_con_chk = ldap_con_chk( $_SESSION['uid'] , $pwd_cur );
+
+				if( $ldap_con_chk == FALSE ){
+					
+					$obj_in['status'] = "false";
+					
+					$json_out = json_encode( $obj_in, JSON_PRETTY_PRINT);
+					print_r( $json_out );
+					
+					exit();
+				}
+				
+				ldap_close($ldap_con_chk);
+				
+				$usr_dn  = 'uid='. $_SESSION['uid'] . ',ou=people,' . $GLOBALS['ldap_base_dn']; 
+			}
+			if( $mode == 'admin' ){
+				
+				if( !isset( $_SESSION['adm'] ) ){ exit(); }
+				
+				$usr_dn  = $POST['usr_dn'];
+			}
+		
+		//---------------------
+			
+			$pwd_new = $POST['pwd_new'];
+			
+			$pwd_md5 = "{MD5}".base64_encode(pack("H*",md5($pwd_new))); // Oviss1234!
+			
+			
+			$REST['dn']   = $usr_dn;
+			$REST['key']  = 'userPassword';
+			$REST['val']  = $pwd_md5;
+			$REST['mode'] = 'quiet';
+			
+			ldap_entry_change( $REST );
+			
+			$obj_in['status'] = "true";
+			
+		//---------------------
+			
+			$json_out = json_encode( $obj_in, JSON_PRETTY_PRINT);
+			print_r( $json_out );
+			
+		//---------------------
+	
+	}
+	
+//-----------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
 	
 	
 

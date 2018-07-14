@@ -104,7 +104,6 @@
 		
 		var domel = document.createElement("INPUT");
 			domel.type = "text";
-			domel.value = input_ary.val;
 			
 			domel.setAttribute( "dn" , input_ary.dn );
 			domel.setAttribute( "key" , input_ary.key );
@@ -121,6 +120,10 @@
 					data.append("val", val);
 				
 				form_post( app_api , data  );
+			}
+			
+			if( input_ary.val != undefined ){
+				domel.value = input_ary.val;
 			}
 		
 		return domel;
