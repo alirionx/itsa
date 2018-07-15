@@ -281,7 +281,7 @@
 			
 		$ldap_con = ldap_con_do();
 			
-		$search_filter = '(&(objectClass=groupOfNames)(cn=*))';
+		$search_filter = '(&(objectClass=itsa)(cn=*))';
 		$justthese = array( "cn", "businessCategory", "description", "descShort", "descLong", "serviceCosts" , "member" , "servicestatus");
 			
 		$result  = ldap_search($ldap_con, $ldap_base_dn, $search_filter , $justthese);				
