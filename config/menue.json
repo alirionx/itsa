@@ -3,42 +3,42 @@
 		"txt":"User Profile",
 		"type":"hash",
 		"linkval":"view=profile",
-		"access_roles":["user", "srvadmin", "diradmin"]
+		"access_session": "uid"
 	},
 	"home":{
 		"txt":"Home",
 		"type":"hash",
 		"linkval":"view=home",
-		"access_roles":["user", "srvadmin", "diradmin"]
+		"access_session": "uid"
 	},
 	"services":{
 		"txt":"My Services",
 		"type":"hash",
 		"linkval":"view=services",
-		"access_roles":["user", "srvadmin", "diradmin"]
+		"access_session": "uid"
 	},
 	"requests":{
 		"txt":"Requests",
 		"type":"hash",
 		"linkval":"view=requests",
-		"access_roles":["user", "srvadmin", "diradmin"]
+		"access_session": "uid"
 	},
 	"usrmgmt":{
 		"txt":"User MGMT",
 		"type":"hash",
 		"linkval":"view=usrmgmt",
-		"access_roles":["diradmin"]
+		"access_session": "adm"
 	},
 	"grpmgmt":{
 		"txt":"Group MGMT",
 		"type":"hash",
 		"linkval":"view=grpmgmt",
-		"access_roles":["diradmin"]
+		"access_session": "adm"
 	},
 	"logoff":{
 		"txt":"Logoff",
 		"type":"function_fw",
 		"linkval":"logoff",
-		"access_roles":["user", "srvadmin", "diradmin"]
+		"access_session": "uid"
 	}
 }

@@ -57,15 +57,19 @@
 	
 	function burger_menue_call(){
 		
-		var url = "config/menue.json";
-
-		get_file_content( url , burger_menue_build );
+		//var url = "config/menue.json";
+		//get_file_content( url , burger_menue_build );
+		
+		var data = new FormData();
+			data.append("function", "burger_menue_call");
+						
+		form_post( app_api , data , burger_menue_build );
 		
 	}
 
 //---------------------------------------------------
 	
-	function burger_menue_build( menue_json ){
+	function burger_menue_build( menue_obj ){
 		
 		//----------------------------------
 			
@@ -73,13 +77,13 @@
 		
 		//----------------------------------
 		
-			if( IsJsonString( menue_json ) ){	
+			/*if( IsJsonString( menue_json ) ){	
 				var menue_obj = JSON.parse(menue_json);
 			}
 			else{
 				console.log("JSON File corrupt or not readable");
 				return false;
-			}
+			}*/
 		
 		//----------------------------------
 		

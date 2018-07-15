@@ -159,6 +159,35 @@
 
 
 
+//--------Menue Json call------------------------------------------------------
+
+	function burger_menue_call(){
+		
+		$json_in = file_get_contents("../config/menue.json");
+		$obj_in = json_decode($json_in, true);
+		
+		//------------------------
+			foreach( $obj_in as $key => $is_entry ){
+				
+				$as = $is_entry['access_session'];
+				
+				if( isset( $_SESSION[$as] ) ){
+					
+					$obj_out[$key] = $is_entry;
+				}	
+			}
+			
+		//------------------------
+			$json_out = json_encode( $obj_out, JSON_PRETTY_PRINT);
+			//echo '<pre>';
+			print_r( $json_out );
+		//------------------------
+	}
+
+//-----------------------------------------------------------------------------
+
+
+
 //--------Call LDAP Users and Attributes---------------------------------------
 	
 	function ldap_users_call( $POST ){
