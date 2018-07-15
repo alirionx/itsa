@@ -11,8 +11,8 @@
 
 //---Maintenance Mode-------------------------------------
 	
-	$_SESSION['uid'] = 'dquilitzsch';
-	$_SESSION['adm'] = true;
+	//$_SESSION['uid'] = 'dquilitzsch';
+	//$_SESSION['adm'] = true;
 
 //--------------------------------------------------------
 

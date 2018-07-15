@@ -4,7 +4,7 @@
 	var app_api 	= 'api/itsa.php';
 	var auth_api	= 'api/auth.php';
 	
-	var base_view 	= "home";
+	var base_view 	= "services";
 	
 	var base_dn		= "dc=app-scape,dc=lab";
 	
@@ -76,8 +76,12 @@
 	
 	function_fw["logoff"] = function() {
 		
+		location.href = "#";
 				
-		alert( "here comes the logoff ;)" );
+		var data = new FormData();
+			data.append("function", "auth_kill");
+		
+		form_post( auth_api , data , location_reload );
 	}
 	
 	function_fw["profile"] = function() {
@@ -91,6 +95,14 @@
 
 	function view_call(){
 		
+		var data = new FormData();
+			data.append("function", "auth_check");
+		
+		form_post( auth_api , data , view_build_call )
+	}
+	
+	function view_build_call(){
+		
 		var view = hash_handler['get']("view");
 		
 		if( view == undefined ){ 
@@ -102,8 +114,94 @@
 		view_build[view]();
 	}
 	
+	function location_reload(){
+		
+		location.reload();
+	}
+	
 //----------------------------------------------------------
+	
+	function login_frame_call(){
+		
+		//blocker_call();
+			
+		//----------------------
+			
+			var af = simple_element_build( "DIV" , "action_form" );
+				af.addEventListener ('keydown', function (event) {
+					if (event.which == 13) {
+						document.getElementById("login_submit").click();
+					}
+				});
+		
+		//----------------------
+		
+			var	af_hl = document.createElement("DIV");
+				af_hl.setAttribute("af_hl" , "1" );
+				af_hl.innerHTML = "ITSA: User login";
+				
+			af.appendChild(af_hl);
+			
+		//----------------------
+			
+			var	af_input = document.createElement("INPUT");
+				af_input.type = "text";
+				af_input.id = "login_uid";
+				af_input.placeholder = "Enter user name";
+				
+			af.appendChild(af_input);
+			
+			var	af_input = document.createElement("INPUT");
+				af_input.type = "password";
+				af_input.id = "login_pwd";
+				af_input.placeholder = "Enter password";
+				
+			af.appendChild(af_input);
+			
+		//----------------------
+			
+			var	af_btn = document.createElement("BUTTON");
+				af_btn.innerHTML = "Login";
+				af_btn.id = "login_submit";
+			
+				af_btn.onclick = function(){
+					
+					var uid_input = document.getElementById("login_uid");
+					var pwd_input = document.getElementById("login_pwd");
+					
+					if( uid_input.value == "" ){
+						uid_input.style.backgroundColor = "#ffe6e6";
+						uid_input.onclick = function(){
+							this.backgroundColor = "#fff";
+						}
+						
+						return false;
+					}
+					else{
+					
+						var data = new FormData();
+							data.append("function", "auth_do");
+							data.append("uid", uid_input.value );
+							data.append("pwd", pwd_input.value );
+						
+						form_post( auth_api , data , location_reload );
+				
+						//this.parentNode.parentNode.removeChild(this.parentNode);
+						//blocker_remove();
+					}
+				}
+				
+			af.appendChild(af_btn);
+		
+		//----------------------
+		
+		document.body.appendChild(af);
+		center_domel( af , "180px" );
+		
+	}
 
+//----------------------------------------------------------
+	
 	function get_file_content( url , follow_function ){
 		
 		var data = null;
@@ -141,6 +239,16 @@
 					console.log(this.responseText);
 					
 					var header_code = this.status;
+				
+				//------------------------------------------
+				
+					if( header_code.toString() == 401 ){
+					
+						login_frame_call();
+						return false;
+					}
+					
+				//------------------------------------------
 					
 					if( header_code.toString()[0] == 2 ){
 						
@@ -158,6 +266,8 @@
 					else{
 						alert("Something went wrong in function " + data.get("function") + " with error code " + this.status );
 					} 
+					
+				//------------------------------------------
 				}
 				
 			});
