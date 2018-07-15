@@ -842,7 +842,6 @@
 			print_r( $json_out );
 			
 		//---------------------
-
 	}
 	
 //-----------------------------------------------------------------------------
@@ -913,10 +912,70 @@
 	}
 	
 //-----------------------------------------------------------------------------
+
+
+
+
+//--------LDAP User Password Change--------------------------------------------
+
+	function services_call( $POST ){
+		
+		//---------------------
+			
+			//$obj_in = array();
+			
+		//---------------------
 	
+			$ldap_base_dn 		= $GLOBALS['ldap_base_dn'];
+			$ldap_grp_base_dn 	= "OU=groups," . $ldap_base_dn;
+			$usr_dn				= 'uid=' . $_SESSION['uid'] . ',ou=people,' . $ldap_base_dn;
+			
+			$ldap_con = ldap_con_do();
+				
+			$search_filter = '(&(objectClass=groupOfNames)(member='.$usr_dn.'))';
+			$justthese = array( "cn", "description", "descShort", "descLong", "serviceCosts" , "servicestatus" , "member" );
+				
+			$result  = ldap_search($ldap_con, $ldap_grp_base_dn, $search_filter , $justthese);				
+			$entries = ldap_get_entries($ldap_con, $result);
+		
+		//---------------------
+		
+			recursive_unset($entries, 'count');
+			
+			$i = 0;
+			$admin_dn = 'cn=admin,'.$GLOBALS['ldap_base_dn'];
+			//$admin_dn = 'cn=admin,dc=app-scape,dc=lab';
+			
+			foreach( $entries as $is_entry ){
+				
+				if( file_exists("../icos/".$is_entry["cn"][0].".png") ){	
+					$entries[$i]['objecticon'] = $is_entry["cn"][0].".png";
+				}
+				else if( file_exists("../icos/".$is_entry["cn"][0].".jpg") ){	
+					$entries[$i]['objecticon'] = $is_entry["cn"][0].".jpg";
+				}
+				else{
+					$entries[$i]['objecticon'] = "grp_plh.png";
+				}
+				
+				$i ++;
+			}
+		
+		//---------------------
+			
+			if( isset( $POST['output'] ) && $POST['output'] == 'print' ){
+				echo '<pre>';
+			}
+			
+			$json_out = json_encode( $entries, JSON_PRETTY_PRINT);
+			print_r( $json_out );
+		
+		//---------------------
 	
+	}
 	
-	
+//-----------------------------------------------------------------------------
+
 	
 	
 	
